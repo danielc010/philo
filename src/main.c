@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 13:42:01 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 01:04:08 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 01:30:01 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,15 @@ int	main(int argc, char **argv)
 		if (i == 4)
 			table.time_to_sleep = result;
 		if (i == 5)
-			table.must_eat_count = result;
+		{
+			if (result == 0)
+			{
+				write(2, "Invalid philo must eat times\n", 2);
+				return (1);
+			}
+			else
+				table.must_eat_count = result;
+		}
 		++i;
 	}
 	if (table.num_philos < 1 || table.time_to_die < 1 || table.time_to_eat < 1

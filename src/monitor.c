@@ -6,22 +6,11 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/23 23:16:34 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 00:50:30 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 01:27:34 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
-
-// Monitor thread (runs in parallel):
-//   while simulation not over:
-//     for each philosopher:
-//       lock death_mutex
-//       check if (now - last_meal_time) > time_to_die
-//         -> if yes: log "X died", set simulation_over = 1, unlock, return
-//       check if all philos have eaten must_eat_count times
-//         -> if yes: set simulation_over = 1, unlock, return
-//       unlock death_mutex
-//     usleep(1000)  (check every 1ms)
 
 void	*mon_routine(void *arg)
 {
@@ -39,9 +28,11 @@ void	*mon_routine(void *arg)
 			pthread_mutex_lock(&table->death_mutex);
 			if ((get_time_ms() - table->philos[i].last_meal_time) > table->time_to_die)
 			{
-				ft_print(&table->philos[i], "died");
 				table->simulation_over = 1;
 				pthread_mutex_unlock(&table->death_mutex);
+				pthread_mutex_lock(&table->print_mutex);
+				printf("%ld %d died\n", get_time_ms() - table->start_time, table->philos[i].id);
+				pthread_mutex_unlock(&table->print_mutex);
 				return (NULL);
 			}
 			if (table->must_eat_count != -1)
