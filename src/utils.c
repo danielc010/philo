@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 14:48:59 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/22 23:16:19 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 00:51:18 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	ft_usleep(long ms, t_table *table)
 	start = get_time_ms();
 	while (get_time_ms() - start < ms)
 	{
-		if (table->simulation_over == 1)
+		if (simulation_over(table) == 1)
 			return ;
 		usleep(500);
 	}
@@ -62,8 +62,18 @@ void	ft_print(t_philo *philo, char *msg)
 	if (!msg)
 		return ;
 	pthread_mutex_lock(&philo->table->print_mutex);
-	if (philo->table->simulation_over == 0)
+	if (simulation_over(philo->table) == 0)
 		printf("%ld %d %s\n", get_time_ms()
 			- philo->table->start_time, philo->id, msg);
 	pthread_mutex_unlock(&philo->table->print_mutex);
+}
+
+int	simulation_over(t_table *table)
+{
+	int	over;
+
+	pthread_mutex_lock(&table->death_mutex);
+	over = table->simulation_over;
+	pthread_mutex_unlock(&table->death_mutex);
+	return (over);
 }

@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/23 23:16:34 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 00:35:12 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 00:50:30 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	*mon_routine(void *arg)
 	int met_eat_count;
 
 	table = (t_table *)arg;
-	while (table->simulation_over == 0)
+	while (simulation_over(table)== 0)
 	{
 		i = 0;
 		met_eat_count = 0;

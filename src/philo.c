@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 23:19:32 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 00:28:51 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 00:49:13 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	*philo_routine(void *arg)
 	}
 	if (philo->id % 2 == 0)
 		ft_usleep(philo->table->time_to_eat, philo->table);
-	while(philo->table->simulation_over == 0)
+	while(simulation_over(philo->table) == 0)
 	{
 
 		if (philo->id % 2 == 0)
