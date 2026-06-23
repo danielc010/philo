@@ -1,0 +1,219 @@
+========== PERSONAL NOTES ==========
+3 exclusive states:
+eat
+think
+sleep
+
+things on table (equal numbers):
+fork
+philosophers
+
+pick up left and right forks before eating
+eat
+once eaten, forks go back on table
+sleep
+think
+
+!eat -> starve
+no comms amongst philosophers
+do not know if others is dying
+
+
+Variables:
+No global variables
+
+number_of_philosophers: no. of philosophers and also forks
+
+time_to_die (in milliseconds): If a philosopher has not started eating within
+time_to_die milliseconds since the start of their last meal or the start of the
+simulation, they die.
+
+time_to_eat (in milliseconds): The time it takes for a philosopher to eat.
+During that time, they will need to hold two forks.
+
+time_to_sleep (in milliseconds): The time a philosopher will spend sleeping.
+
+number_of_times_each_philosopher_must_eat (optional argument): If all
+philosophers have eaten at least number_of_times_each_philosopher_must_eat
+times, the simulation stops. If not specified, the simulation stops when a
+philosopher dies.
+
+
+Data Structure:
+circular linked list (double or single?)
+
+
+Logs:
+◦ timestamp_in_ms X has taken a fork
+◦ timestamp_in_ms X is eating
+◦ timestamp_in_ms X is sleeping
+◦ timestamp_in_ms X is thinking
+◦ timestamp_in_ms X died
+
+timestamp_in_ms - current timestamp in milliseconds
+X - philosopher number
+
+no msg to overlap with another
+msg announcing death must be within 10ms of actual death
+philosophers should avoid dying
+no data races
+
+External Functions:
+printf, malloc, free, write
+void
+	*memset(void *b, int c, size_t len): write len bytes of value c (converted to unsigned char) to the string b
+int
+	usleep(useconds_t microseconds):
+	The usleep() function suspends execution of the calling thread until either microseconds microseconds have
+     elapsed or a signal is delivered to the thread and its action is to invoke a signal-catching function or to
+     terminate the process.  System activity or limitations may lengthen the sleep by an indeterminate amount.
+
+     This function is implemented using nanosleep(2) by pausing for microseconds microseconds or until a signal
+     occurs.  Consequently, in this implementation, sleeping has no effect on the state of process timers, and there
+     is no special handling for SIGALRM.  Also, this implementation does not put a limit on the value of microseconds
+     (other than that limited by the size of the useconds_t type); some other platforms require it to be less than one
+     million.
+int
+     gettimeofday(struct timeval *restrict tp, void *restrict tzp): get date and time
+int
+     pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg); - create a new thread
+int
+     pthread_detach(pthread_t thread); detach a thread
+int
+     pthread_join(pthread_t thread, void **value_ptr); wait for thread termination
+int
+     pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr); - create a mutex
+int
+     pthread_mutex_destroy(pthread_mutex_t *mutex); - free resources allocated for a mutex
+int
+     pthread_mutex_lock(pthread_mutex_t *mutex); - lock a mutex
+int
+     pthread_mutex_unlock(pthread_mutex_t *mutex); - unlock a mutex
+
+
+
+========== IMPLEMENTATION PLAN ==========
+
+--- DATA STRUCTURES ---
+
+Forget circular linked list — use arrays, simpler and cleaner with threads.
+
+t_fork:
+  pthread_mutex_t  mutex
+
+t_philo:
+  int              id                  (1-based)
+  long             last_meal_time      (ms timestamp)
+  int              meals_eaten
+  t_fork           *left_fork
+  t_fork           *right_fork
+  pthread_t        thread
+  t_table          *table              (pointer back to shared data)
+
+t_table:
+  int              num_philos
+  long             time_to_die
+  long             time_to_eat
+  long             time_to_sleep
+  int              must_eat_count      (-1 if not set)
+  long             start_time          (ms, set once before threads launch)
+  int              simulation_over     (flag: 0 or 1)
+  pthread_mutex_t  death_mutex         (protects simulation_over + last_meal_time)
+  pthread_mutex_t  print_mutex         (prevents log overlap)
+  t_fork           *forks              (array of t_fork)
+  t_philo          *philos             (array of t_philo)
+
+
+--- MUTEX STRATEGY ---
+
+- One mutex per fork (forks[i].mutex)
+- death_mutex: protects simulation_over flag and each philo's last_meal_time
+- print_mutex: ensures log messages never interleave
+
+Fork pickup order to prevent deadlock:
+  Even-numbered philos: pick up left fork first, then right
+  Odd-numbered philos:  pick up right fork first, then left
+  (breaks the circular wait condition)
+
+
+--- THREAD STRUCTURE ---
+
+Main thread:
+  1. Parse and validate args
+  2. Init table, forks, philos
+  3. Record start_time
+  4. Launch one thread per philosopher
+  5. Launch one monitor thread
+  6. pthread_join all philosopher threads
+  7. pthread_join monitor thread
+  8. Cleanup (destroy mutexes, free memory)
+
+Philosopher thread loop:
+  while simulation not over:
+    pick up forks (in correct order)
+    log "has taken a fork" x2
+    log "is eating" -> update last_meal_time -> usleep(time_to_eat)
+    put down forks
+    increment meals_eaten
+    log "is sleeping" -> usleep(time_to_sleep)
+    log "is thinking"
+
+Monitor thread (runs in parallel):
+  while simulation not over:
+    for each philosopher:
+      lock death_mutex
+      check if (now - last_meal_time) > time_to_die
+        -> if yes: log "X died", set simulation_over = 1, unlock, return
+      check if all philos have eaten must_eat_count times
+        -> if yes: set simulation_over = 1, unlock, return
+      unlock death_mutex
+    usleep(1000)  (check every 1ms)
+
+
+--- TIMING ---
+
+- get_time_ms(): uses gettimeofday(), returns ms since epoch
+- start_time recorded once in main before threads launch
+- All timestamps in logs = get_time_ms() - start_time
+- ft_usleep(ms): loop with small usleeps + check simulation_over
+  (usleep is imprecise for long sleeps, looping is safer)
+
+
+--- EDGE CASES ---
+
+- 1 philosopher: picks up one fork, can never eat, dies. Must handle gracefully.
+- Validate all args are positive integers before starting
+- If must_eat_count = 0, stop immediately (or treat as not set — check subject)
+- Never print after simulation_over is set
+
+
+--- FILE STRUCTURE ---
+
+philo/
+  Makefile
+  philo.h          (structs, prototypes, includes)
+  main.c           (parse args, init, launch threads, cleanup)
+  init.c           (init_table, init_forks, init_philos)
+  philo.c          (philosopher thread routine)
+  monitor.c        (monitor thread routine)
+  utils.c          (get_time_ms, ft_usleep, ft_print, error handling)
+
+
+--- BUILD ORDER ---
+
+Step 1: structs + Makefile + philo.h skeleton
+Step 2: arg parsing + validation in main.c
+Step 3: init functions
+Step 4: timing utils (get_time_ms, ft_usleep)
+Step 5: ft_print with mutex
+Step 6: philosopher thread routine
+Step 7: monitor thread
+Step 8: test with: ./philo 5 800 200 200
+        (no one should die)
+Step 9: test with: ./philo 1 800 200 200
+        (philosopher 1 should die)
+Step 10: test with: ./philo 5 800 200 200 7
+        (stops after each has eaten 7 times)
+Step 11: run with valgrind --tool=helgrind to check data races
+
+=========================================

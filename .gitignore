@@ -1,0 +1,15 @@
+# Object files
+*.o
+*.a
+
+# Executables
+Philosophers
+a.out
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Test artifacts
+*.dSYM/
+*.log
