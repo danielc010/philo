@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 13:42:01 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 00:07:34 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 01:04:08 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,6 @@ int	main(int argc, char **argv)
 		++i;
 	}
 	pthread_join(monitor, NULL);
+	cleanup(&table);
 	return (0);
 }

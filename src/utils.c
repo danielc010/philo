@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 14:48:59 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 00:51:18 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 01:03:35 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,20 @@ int	simulation_over(t_table *table)
 	over = table->simulation_over;
 	pthread_mutex_unlock(&table->death_mutex);
 	return (over);
+}
+
+void	cleanup(t_table *table)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_destroy(&table->death_mutex);
+	pthread_mutex_destroy(&table->print_mutex);
+	while (i < table->num_philos)
+	{
+		pthread_mutex_destroy(&table->forks[i].mutex);
+		++i;
+	}
+	free(table->forks);
+	free(table->philos);
 }

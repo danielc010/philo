@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/19 20:28:32 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 00:51:36 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 01:04:19 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,6 @@ void	ft_print(t_philo *philo, char *msg);
 void	*philo_routine(void *arg);
 void	*mon_routine(void *arg);
 int		simulation_over(t_table *table);
+void	cleanup(t_table *table);
 
 #endif
