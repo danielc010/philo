@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 13:42:01 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 01:30:01 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/24 01:33:42 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	main(int argc, char **argv)
 		{
 			if (result == 0)
 			{
-				write(2, "Invalid philo must eat times\n", 2);
+				write(2, "Invalid philo must eat times\n", 29);
 				return (1);
 			}
 			else
