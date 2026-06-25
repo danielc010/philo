@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/25 02:49:29 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 02:49:44 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/25 23:24:11 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ int	assign_result(int i, t_table *table, int result)
 {
 	if (i == 1)
 		table->num_philos = result;
-	if (i == 2)
+	else if (i == 2)
 		table->time_to_die = result;
-	if (i == 3)
+	else if (i == 3)
 		table->time_to_eat = result;
-	if (i == 4)
+	else if (i == 4)
 		table->time_to_sleep = result;
-	if (i == 5)
+	else if (i == 5)
 		if (fifth_arg(table, result))
 			return (1);
 	return (0);

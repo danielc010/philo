@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 23:19:32 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 23:17:27 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/25 23:28:09 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	handle_one_philo(t_philo *philo)
 }
 
 // Break circular wait with reverse order. Not everyone that reaches for
-// the same fork gets it. One gets it, the other waits. 
+// the same fork gets it. One gets it, the other waits.
 static void	pick_up_forks(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
@@ -40,25 +40,11 @@ static void	pick_up_forks(t_philo *philo)
 	}
 }
 
-// pthread_create takes in void *. Casting arg here returns type t_philo * back.
-// First ft_usleep: we delay even philosophers at startup, so there is no
-// starvation, where some philos rarely get both forks. Here we make the even
-// philos wait for the odd ones to start eating.
 // ft_usleep(1): tagger when total philo counts are odd, cos the first and last
 // philos are odd philos are competing for the same fork.
 // Tiny usleep here intros just enough of a delay to break that sync.
-void	*philo_routine(void *arg)
+static void	cont_sim(t_philo *philo)
 {
-	t_philo	*philo;
-
-	philo = (t_philo *)arg;
-	if (philo->table->num_philos == 1)
-	{
-		handle_one_philo(philo);
-		return (NULL);
-	}
-	if (philo->id % 2 == 0)
-		ft_usleep(philo->table->time_to_eat, philo->table);
 	while (simulation_over(philo->table) == 0)
 	{
 		pick_up_forks(philo);
@@ -76,5 +62,24 @@ void	*philo_routine(void *arg)
 		if (philo->table->num_philos % 2 == 1)
 			ft_usleep(1, philo->table);
 	}
+}
+
+// pthread_create takes in void *. Casting arg here returns type t_philo * back.
+// First ft_usleep: we delay even philosophers at startup, so there is no
+// starvation, where some philos rarely get both forks. Here we make the even
+// philos wait for the odd ones to start eating.
+void	*philo_routine(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	if (philo->table->num_philos == 1)
+	{
+		handle_one_philo(philo);
+		return (NULL);
+	}
+	if (philo->id % 2 == 0)
+		ft_usleep(philo->table->time_to_eat, philo->table);
+	cont_sim(philo);
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 13:42:01 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 03:21:45 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/25 23:29:16 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ static int	create_phil_thread(t_table *table)
 	i = 0;
 	while (i < table->num_philos)
 	{
-		if (pthread_create(&table->philos[i].thread, NULL, philo_routine, &table->philos[i]) != 0)
+		if (pthread_create(&table->philos[i].thread, NULL, philo_routine,
+				&table->philos[i]) != 0)
 		{
 			t_create_fail(table, i, NULL);
 			cleanup(table);
@@ -32,7 +33,7 @@ static int	create_phil_thread(t_table *table)
 
 static int	create_join_thread(t_table *table, pthread_t *monitor)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (create_phil_thread(table))
