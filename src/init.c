@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 20:52:29 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/24 00:07:20 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/25 01:35:22 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ void	init_philos(t_table *table)
 		table->philos[i].last_meal_time = table->start_time;
 		table->philos[i].meals_eaten = 0;
 		table->philos[i].left_fork = &table->forks[i];
-		table->philos[i].right_fork = &table->forks[(i + 1) % table->num_philos];
+		table->philos[i].right_fork = &table->forks[(i + 1)
+			% table->num_philos];
 		table->philos[i].table = table;
 		++i;
 	}

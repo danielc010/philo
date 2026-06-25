@@ -4,35 +4,16 @@
 
 ## DESCRIPTION
 
-Minishell is a Unix shell implementation built as part of the 42 curriculum. The goal is to reproduce the core behaviour of bash — reading user input, parsing it, and executing commands — while handling pipes, redirections, environment variables, signals, and a set of built-in commands.
-
-The project is divided between two authors: **luimarti** is responsible for the lexer, parser, expander, and the built-ins `echo`, `pwd`, and `env`; **dachin** is responsible for the executor, pipes, redirections, signals, and the built-ins `cd`, `export`, `unset`, and `exit`.
-
-### How it works
-
-The shell follows this pipeline for every command the user types:
-
-1. **Lexer** — tokenises the raw input string into a linked list of tokens (words, pipes, redirections, heredocs).
-2. **Parser** — converts the token list into a linked list of `t_cmd` structs, each representing one command with its arguments and redirections.
-3. **Expander** — expands environment variables (`$VAR`, `$?`) and strips quotes from every argument and redirection filename.
-4. **Executor** — executes each command: built-ins are called directly as C functions; external commands are run via `fork` + `execve`. Pipes connect processes, and redirections adjust `stdin`/`stdout` using `dup2`.
+Philosophers is designed around a classic problem (Edsger Dijkstra's famous dining philosophers problem) in computer science  which deals with concurrent programming. The learning objectives are learning about threads, mutexes, deadlocks, data races, and initialisation orders. The project simulates threads (philosophers) sharing common resources of memory (forks) and going through actions that will determine their fate.
 
 ### Key Concepts
 
-* **Tokenisation**
-  The lexer uses a state machine (NORMAL, IN_WORD, IN_SINGLE_QUOTE, IN_DOUBLE_QUOTE) to classify each character and group them into typed tokens.
-
-* **fork / execve**
-  External commands are executed in a child process created with `fork()`. The child calls `execve()` to replace itself with the target program. The parent waits with `waitpid()` and collects the exit status.
-
-* **Pipes**
-  A pipe is an OS-level channel between two processes. `pipe()` creates two file descriptors; `dup2()` connects the write end to the first child's stdout and the read end to the second child's stdin.
-
-* **Redirections**
-  Input/output redirections (`<`, `>`, `>>`, `<<`) are applied in the child process using `dup2()` before `execve()`, so the parent's file descriptors are never affected.
-
-* **Signals**
-  `sigaction()` is used to handle `SIGINT` (Ctrl+C) and `SIGQUIT` (Ctrl+\). The shell uses three signal modes: interactive (waiting for input), waiting (parent waiting for a child), and child (default behaviour restored before `execve`). A single global variable `g_signal` (of type `volatile sig_atomic_t`) is used to communicate signal events from the handler to the main loop.
+* Threads share memory within a process, enabling concurrency but also races
+* Mutexes protect shared data by ensuring only one thread accesses it at a time
+* Deadlock happens when a thread waits for a lock it already holds — fix by releasing before re-acquiring
+* Data race vs deadlock — wrong results vs program hangs
+* Dining philosophers — even/odd fork ordering prevents deadlock, staggering prevents starvation
+* Initialization order — dependencies must be satisfied before the code that needs them runs
 
 ---
 
@@ -58,60 +39,37 @@ Recompile everything:
 
 ### Execution
 
-Run the shell:
+Run the program:
 
-    ./minishell
+./philo number_of_philosophers time_to_die time_to_eat time_to_sleep
+      [number_of_times_each_philosopher_must_eat]
 
-The shell supports the following built-in commands:
-
-| Command | Description |
-|---|---|
-| `echo [-n]` | Print arguments to stdout. `-n` suppresses the trailing newline. |
-| `pwd` | Print the current working directory. |
-| `env` | Print all environment variables. |
-| `cd [path]` | Change the current directory. |
-| `export [NAME=value]` | Set or export an environment variable. |
-| `unset [NAME]` | Remove an environment variable. |
-| `exit [n]` | Exit the shell with optional exit code. |
-
-### Supported features
-
-* Single and double quotes
-* Environment variable expansion (`$VAR`, `$?`)
-* Input/output redirections: `<`, `>`, `>>`
-* Heredoc: `<<`
-* Pipes: `|`
-* Command history (arrow keys)
-* Ctrl+C — display a new prompt
-* Ctrl+D — exit the shell
-* Ctrl+\ — ignored
+e.g. ./philo 2 800 200 200
 
 ---
 
 ## RESOURCES
 
-* GNU Bash Reference Manual
-  https://www.gnu.org/software/bash/manual/bash.html
+* Philosophers — Dining Philosophers problem - Dina ELgammal:
+  https://medium.com/@denaelgammal/dining-philosophers-problem-42-project-guide-mandatory-part-a20fb8dc530e
 
-* The Open Group Base Specifications — Shell Command Language
-  https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
-
-* Linux man pages: `fork`, `execve`, `pipe`, `dup2`, `waitpid`, `sigaction`
+* Linux man pages:
   https://man7.org/linux/man-pages/
 
-* GNU Readline Library
-  https://tiswww.case.edu/php/chet/readline/rltop.html
+* DINING-PHILOSOPHERS PROBLEM: SIMPLIFIED — Zaynab Zakiyah
+  https://www.youtube.com/watch?v=VSkvwzqo-Pk
 
-* Write a Shell in C — Stephen Brennan
-  https://brennan.io/2015/01/16/write-a-shell-in-c/
+*I ntroduction to Parallel Computing Tutorial:
+  https://hpc.llnl.gov/documentation/tutorials/introduction-parallel-computing-tutorial#Whatis
+
+* 42 Philosophers Tester:
+  https://github.com/dantonik/42-philosophers-tester
 
 ### AI Usage
 
-AI tools (Claude by Anthropic) were used extensively throughout this project for:
+AI tools (Claude by Anthropic) were used in this project for:
 
-* Explaining Unix system calls (`fork`, `execve`, `pipe`, `dup2`, `waitpid`, `sigaction`) and their correct usage in a shell context.
-* Reviewing and debugging the lexer state machine, parser logic, and expander behaviour.
-* Identifying and fixing bugs in pipe handling, signal management, redirection application, and built-in exit codes.
-* Discussing the correct behaviour of edge cases by comparing output against bash.
-* Writing and iterating on test scripts to validate the shell against the evaluation sheet and a community tester.
-* Formatting and structuring this README according to the subject requirements.
+* Explaining concepts of threads, mutexes, race conditions, sleep in detail
+* Reviewing and debugging the program
+* Discussing the correct behaviour of our program edge cases
+* Writing and iterating on test scripts to validate the program against the evaluation sheet and a community tester.

@@ -6,16 +6,18 @@
 #    By: dachin <dachin@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2026/03/18 08:09:26 by dachin        #+#    #+#                  #
-#    Updated: 2026/06/24 00:02:24 by dachin        ########   odam.nl          #
+#    Updated: 2026/06/25 02:50:49 by dachin        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 # List of source files
 SRCS = 	src/main.c \
 		src/utils.c \
+		src/utils2.c \
 		src/init.c \
 		src/philo.c \
 		src/monitor.c \
+		src/parse.c \
 
 # Creates object files by replacing .c with .o. $ references variables or automatic variables
 OBJ_DIR = o_files
