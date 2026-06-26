@@ -65,7 +65,7 @@ fclean:	clean
 re:	fclean all
 
 # Declares these targets as phony (not actual files), so Make always runs them when requested.
-.PHONY: all clean fclean re test sanitize
+.PHONY: all clean fclean re test sanitize valgrind helgrind
 
 # ===== TEST SECTION =====
 # Run bash test suite
@@ -76,3 +76,9 @@ test: $(NAME)
 # fsanitise for macOS
 sanitize: CFLAGS += -fsanitize=address -g
 sanitize: re
+
+valgrind: $(NAME)
+	@bash tests/valgrind_test.sh valgrind
+
+helgrind: $(NAME)
+	@bash tests/valgrind_test.sh helgrind

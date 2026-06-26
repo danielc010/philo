@@ -17,6 +17,7 @@ static void	handle_one_philo(t_philo *philo)
 	pthread_mutex_lock(&philo->left_fork->mutex);
 	ft_print(philo, "has taken a fork");
 	ft_usleep(philo->table->time_to_die, philo->table);
+	pthread_mutex_unlock(&philo->left_fork->mutex);
 	return ;
 }
 
