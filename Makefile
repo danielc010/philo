@@ -6,7 +6,7 @@
 #    By: dachin <dachin@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2026/03/18 08:09:26 by dachin        #+#    #+#                  #
-#    Updated: 2026/06/25 02:50:49 by dachin        ########   odam.nl          #
+#    Updated: 2026/06/26 08:53:51 by dachin        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,23 +59,14 @@ clean:
 # Removes all object files and the library file.
 fclean:	clean
 	$(RM) $(NAME)
-	$(RM) tests/test_runner
 
 # Rebuilds everything by clean and all
 re:	fclean all
 
 # Declares these targets as phony (not actual files), so Make always runs them when requested.
-.PHONY: all clean fclean re test sanitize valgrind helgrind
+.PHONY: all clean fclean re valgrind helgrind
 
 # ===== TEST SECTION =====
-# Run bash test suite
-test: $(NAME)
-	@echo "Running test suite..."
-	@cd tests && ./test.sh
-
-# fsanitise for macOS
-sanitize: CFLAGS += -fsanitize=address -g
-sanitize: re
 
 valgrind: $(NAME)
 	@bash tests/valgrind_test.sh valgrind
