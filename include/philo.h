@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/19 20:28:32 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 02:50:15 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/26 08:01:40 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <limits.h>
 # include <stdio.h>
 
+// Each mutex is the fork
 typedef struct s_fork
 {
 	pthread_mutex_t	mutex;
@@ -64,12 +65,12 @@ typedef struct s_table
 	t_philo			*philos;
 }	t_table;
 
+void	init_table(t_table *table);
 int		fifth_arg(t_table *table, int result);
 int		assign_result(int i, t_table *table, int result);
 int		validate_args(char **argv, int *error, t_table *table);
-void	init_table(t_table *table);
-void	init_forks(t_table *table);
-void	init_philos(t_table *table);
+int		init_forks(t_table *table);
+int		init_philos(t_table *table);
 int		ft_atoi_strict(const char *s, int *error);
 long	get_time_ms(void);
 void	ft_usleep(long ms, t_table *table);

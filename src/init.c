@@ -6,13 +6,11 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 20:52:29 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 01:35:22 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/26 07:59:06 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
-
-// init_table, init_forks, init_philos
 
 void	init_table(t_table *table)
 {
@@ -23,28 +21,30 @@ void	init_table(t_table *table)
 	pthread_mutex_init(&table->print_mutex, NULL);
 }
 
-void	init_forks(t_table *table)
+int	init_forks(t_table *table)
 {
 	int	i;
 
 	table->forks = malloc(table->num_philos * sizeof(t_fork));
 	if (!table->forks)
-		return ;
+		return (1);
 	i = 0;
 	while (i < table->num_philos)
 	{
 		pthread_mutex_init(&table->forks[i].mutex, NULL);
 		++i;
 	}
+	return (0);
 }
 
-void	init_philos(t_table *table)
+// using fork[(i + 1) % num_philos wraps the last fork to the first]
+int	init_philos(t_table *table)
 {
 	int	i;
 
 	table->philos = malloc(table->num_philos * sizeof(t_philo));
 	if (!table->philos)
-		return ;
+		return (1);
 	i = 0;
 	while (i < table->num_philos)
 	{
@@ -57,4 +57,5 @@ void	init_philos(t_table *table)
 		table->philos[i].table = table;
 		++i;
 	}
+	return (0);
 }

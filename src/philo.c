@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 23:19:32 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 23:28:09 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/26 07:48:35 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	pick_up_forks(t_philo *philo)
 	}
 }
 
-// ft_usleep(1): tagger when total philo counts are odd, cos the first and last
+// ft_usleep(1): stagger when total philo counts are odd, cos the first and last
 // philos are odd philos are competing for the same fork.
 // Tiny usleep here intros just enough of a delay to break that sync.
 static void	cont_sim(t_philo *philo)

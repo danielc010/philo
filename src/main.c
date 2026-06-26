@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 13:42:01 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 23:29:16 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/26 06:59:31 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ static int	create_join_thread(t_table *table, pthread_t *monitor)
 	return (0);
 }
 
+// Acceot 5 or 6 (optional) arguments
 int	main(int argc, char **argv)
 {
 	int			error;
@@ -67,15 +68,12 @@ int	main(int argc, char **argv)
 	init_table(&table);
 	if (validate_args(argv, &error, &table))
 		return (1);
-	if (table.num_philos < 1 || table.time_to_die < 1 || table.time_to_eat < 1
-		|| table.time_to_sleep < 1)
+	table.start_time = get_time_ms();
+	if (init_forks(&table) || init_philos(&table))
 	{
-		write(2, "At least 1 philosopher required or times < 1.\n", 46);
+		write(2, "Malloc failure\n", 15);
 		return (1);
 	}
-	table.start_time = get_time_ms();
-	init_forks(&table);
-	init_philos(&table);
 	if (!create_join_thread(&table, &monitor))
 		cleanup(&table);
 	return (0);

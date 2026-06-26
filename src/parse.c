@@ -6,7 +6,7 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/25 02:49:29 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 23:24:11 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/26 06:55:25 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,12 @@ int	validate_args(char **argv, int *error, t_table *table)
 		if (assign_result(i, table, result))
 			return (1);
 		++i;
+	}
+	if (table->num_philos < 1 || table->time_to_die < 1
+		|| table->time_to_eat < 1 || table->time_to_sleep < 1)
+	{
+		write(2, "At least 1 philosopher required or times < 1.\n", 46);
+		return (1);
 	}
 	return (0);
 }

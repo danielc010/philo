@@ -6,12 +6,13 @@
 /*   By: dachin <dachin@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/06/22 14:48:59 by dachin        #+#    #+#                 */
-/*   Updated: 2026/06/25 01:40:53 by dachin        ########   odam.nl         */
+/*   Updated: 2026/06/26 06:38:27 by dachin        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
+// Guards against overflow one computation before it happens, sets error to 1
 int	ft_atoi_strict(const char *s, int *error)
 {
 	int	i;
@@ -34,6 +35,7 @@ int	ft_atoi_strict(const char *s, int *error)
 	return (value);
 }
 
+// Retrieve current time in milliseconds (ms). 1/1000 s
 long	get_time_ms(void)
 {
 	struct timeval	tv;
@@ -57,6 +59,7 @@ void	ft_usleep(long ms, t_table *table)
 	}
 }
 
+// Print mutex locking ensures no messages are overlapped
 void	ft_print(t_philo *philo, char *msg)
 {
 	if (!msg)
