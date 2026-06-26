@@ -6,7 +6,7 @@
 #    By: dachin <dachin@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2026/03/18 08:09:26 by dachin        #+#    #+#                  #
-#    Updated: 2026/06/26 08:53:51 by dachin        ########   odam.nl          #
+#    Updated: 2026/06/26 08:54:55 by dachin        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,9 +26,6 @@ OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 # Compiler and compiler flags
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-
-# Detect OS
-UNAME_S := $(shell uname -s)
 
 # Main executable name
 NAME = philo
