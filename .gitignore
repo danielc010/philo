@@ -3,7 +3,7 @@
 *.a
 
 # Executables
-Philosophers
+philo
 a.out
 
 # macOS
